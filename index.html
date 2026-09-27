@@ -18,9 +18,8 @@
     --paper:      #f5f1e8;
     --sheet:      #fbf8f2;
     --ink:        #16232b;
-    --ink-soft:   #2c3d47;
     --sea:        #2c5f68;
-    --edge:       rgba(22, 35, 43, 0.10);
+    --ember:      #b45f22;
   }
 
   *, *::before, *::after { box-sizing: border-box; }
@@ -30,13 +29,17 @@
     -webkit-text-size-adjust: 100%;
   }
 
+  /* Warm at the foot of the page, cool at the head. Both colours are
+     lifted off the photo: firelight below, sea above. */
   body {
     margin: 0;
     min-height: 100vh;
     background:
-      radial-gradient(120% 55% at 50% -10%, rgba(44, 95, 104, 0.10) 0%, rgba(44, 95, 104, 0) 60%),
-      linear-gradient(180deg, #f2eee4 0%, var(--paper) 38%, #f6f2ea 100%);
-    background-attachment: fixed;
+      radial-gradient(95% 46% at 50% 106%, rgba(180, 95, 34, 0.16) 0%, rgba(180, 95, 34, 0) 64%),
+      radial-gradient(120% 55% at 50% -10%, rgba(44, 95, 104, 0.09) 0%, rgba(44, 95, 104, 0) 60%),
+      linear-gradient(180deg, #f2eee4 0%, var(--paper) 40%, #f7f1e5 100%);
+    /* Anchored to the letter, not the screen. Sea at the head, firelight at the foot. */
+    background-attachment: scroll;
     color: var(--ink);
     font-family: "Karla", "Helvetica Neue", Arial, sans-serif;
     font-size: 100%;
@@ -49,17 +52,33 @@
   }
 
   main {
+    position: relative;
+    isolation: isolate;
     width: 100%;
     max-width: 39rem;
     background: transparent;
     padding: clamp(3.25rem, 13vw, 5.5rem) clamp(1.5rem, 7vw, 4.25rem) clamp(3.5rem, 12vw, 5rem);
   }
 
+  /* Paper grain. Sits above the sheet, below every word. */
+  main::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: inherit;
+    opacity: 0.055;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
   /* Phone: the sheet IS the page. No card inside a card. */
   @media (min-width: 40rem) {
     body { padding: clamp(2rem, 6vw, 4.5rem) 1.5rem; }
     main {
-      background: var(--sheet);
+      background: linear-gradient(180deg, var(--sheet) 58%, #fdf6ea 100%);
       border-radius: 3px;
       box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.8) inset,
@@ -101,7 +120,49 @@
     hyphens: none;
   }
 
-  .body p:last-child { margin-bottom: 0; }
+  .body > p:last-child { margin-bottom: 0; }
+
+  /* Phone: paragraph first, then the photo underneath it.
+     Wide: the photo tucks into the right margin and the words run past it. */
+  .memory {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .snap {
+    --tilt: -2.4deg;
+    margin: 0.4rem auto 1.9rem;
+    align-self: center;
+    width: min(58%, 182px);
+    padding: 0.5rem 0.5rem 1.35rem;
+    background: #fffdf7;
+    border-radius: 2px;
+    transform: rotate(var(--tilt));
+    box-shadow:
+      0 0 0 1px rgba(22, 35, 43, 0.05),
+      0 2px 3px rgba(48, 26, 10, 0.10),
+      0 16px 28px -14px rgba(48, 26, 10, 0.45);
+  }
+
+  .snap img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 1px;
+    background: #e6dfd2;
+  }
+
+  @media (min-width: 40rem) {
+    .memory { display: block; }
+    .snap {
+      --tilt: 2.2deg;
+      float: right;
+      width: 38%;
+      max-width: 208px;
+      margin: 0.35rem -1.1rem 0.9rem 1.7rem;
+      shape-outside: inset(0 round 2px);
+    }
+  }
 
   .rule {
     display: block;
@@ -110,6 +171,7 @@
     margin: clamp(2.75rem, 10vw, 3.75rem) 0 clamp(1.75rem, 6vw, 2.25rem);
     color: var(--sea);
     opacity: 0.55;
+    clear: both;
   }
 
   .sign {
@@ -117,24 +179,69 @@
     font-variation-settings: "opsz" 60, "SOFT" 100, "WONK" 1;
     font-style: italic;
     font-weight: 500;
-    font-size: clamp(1.95rem, 8vw, 2.5rem);
-    line-height: 1;
+    font-size: clamp(1.7rem, 7.4vw, 2.5rem);
+    line-height: 1.12;
     letter-spacing: -0.015em;
     margin: 0;
     color: var(--ink);
+    overflow-wrap: break-word;
   }
 
+  /* Everything below is decoration. With motion turned off the page above
+     is already the finished page. */
   @media (prefers-reduced-motion: no-preference) {
-    main { animation: settle 700ms cubic-bezier(0.16, 1, 0.3, 1) both; }
-    @keyframes settle {
-      from { opacity: 0; transform: translateY(10px); }
+    main { animation: arrive 800ms ease-out both; }
+
+    .salutation,
+    .lead,
+    .memory > p,
+    .body > p,
+    .rule,
+    .sign { animation: rise 900ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+    .salutation          { animation-delay: 180ms; }
+    .lead                { animation-delay: 380ms; }
+    .memory > p          { animation-delay: 580ms; }
+    .body > p:nth-of-type(1) { animation-delay: 760ms; }
+    .body > p:nth-of-type(2) { animation-delay: 920ms; }
+    .body > p:nth-of-type(3) { animation-delay: 1080ms; }
+    .rule                { animation-delay: 1240ms; }
+    .sign                { animation-delay: 1900ms; }
+
+    /* Placed by hand, a beat after the sentence it belongs to. */
+    .snap { animation: place 1500ms cubic-bezier(0.16, 1, 0.3, 1) 760ms both; }
+
+    /* And then it develops. */
+    .snap img { animation: develop 3000ms ease-out 1000ms both; }
+
+    /* The wave draws itself, once, slowly. */
+    .rule path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 2600ms cubic-bezier(0.37, 0, 0.25, 1) 1450ms both; }
+
+    @keyframes arrive {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(9px); }
       to   { opacity: 1; transform: none; }
+    }
+    @keyframes place {
+      from { opacity: 0; transform: rotate(calc(var(--tilt) - 5deg)) translateY(15px) scale(0.965); }
+      to   { opacity: 1; transform: rotate(var(--tilt)) translateY(0) scale(1); }
+    }
+    @keyframes develop {
+      from { filter: saturate(0.1) contrast(0.8) brightness(1.24); }
+      to   { filter: saturate(1) contrast(1) brightness(1); }
+    }
+    @keyframes draw {
+      to { stroke-dashoffset: 0; }
     }
   }
 
   @media print {
     body { background: #fff; padding: 0; }
     main { box-shadow: none; border-radius: 0; max-width: none; animation: none; }
+    main::before { display: none; }
     .rule { opacity: 0.7; }
   }
 </style>
@@ -146,21 +253,27 @@
     <p class="lead">I&rsquo;m gutted I couldn&rsquo;t be there.</p>
 
     <div class="body">
-      <p>It does not feel like that long since Bali, and Oktoberfest, and all the endless surf missions. Somehow that was a decade ago. You and Nick are married men now, I&rsquo;m engaged, and I genuinely don&rsquo;t know when that happened.</p>
+      <div class="memory">
+        <figure class="snap">
+          <img src="bonfire.jpg" width="720" height="960" alt="Three of us on a beach at night, bonfire going, beers in hand." decoding="async">
+        </figure>
+        <p>It does not feel like that long since Bali, and Oktoberfest, and all the endless surf missions. Somehow that was a decade ago. You and Nick are married men now, I&rsquo;m engaged, and I genuinely don&rsquo;t know when that happened.</p>
+      </div>
 
       <p>Julie, I&rsquo;ve not had nearly enough time with you, and I&rsquo;m looking forward to fixing that. You&rsquo;ve got yourself one of the good ones. Wil feels everything at full volume. That&rsquo;s why we love him.</p>
 
-      <p>Wish I could have been there to celebrate with you both on the weekend. Looking forward to celebrating back in New Zealand. First one&rsquo;s on me.</p>
+      <p>Wish I could have been there to celebrate with you both. Looking forward to celebrating back in New Zealand.</p>
 
       <p>Hope the day was everything you wanted it to be. Are you off somewhere after?</p>
     </div>
 
     <svg class="rule" viewBox="0 0 172 10" fill="none" aria-hidden="true" focusable="false">
-      <path d="M1 5.6c7.2-6.1 14.3-6.1 21.5 0s14.3 6.1 21.5 0 14.3-6.1 21.5 0 14.3 6.1 21.5 0 14.3-6.1 21.5 0 14.3 6.1 21.5 0 14.3-6.1 21.5 0"
+      <path pathLength="1"
+            d="M1 5.6c7.2-6.1 14.3-6.1 21.5 0s14.3 6.1 21.5 0 14.3-6.1 21.5 0 14.3 6.1 21.5 0 14.3-6.1 21.5 0 14.3 6.1 21.5 0 14.3-6.1 21.5 0"
             stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
 
-    <p class="sign">Luke</p>
+    <p class="sign">Luke and Rach</p>
   </main>
 </body>
 </html>
