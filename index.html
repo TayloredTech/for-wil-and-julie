@@ -94,8 +94,22 @@
     font-size: clamp(2.15rem, 10.5vw, 3.5rem);
     line-height: 1.04;
     letter-spacing: -0.022em;
-    margin: 0 0 clamp(1.5rem, 6vw, 2.25rem);
+    margin: 0 0 clamp(0.85rem, 3.4vw, 1.3rem);
     color: var(--ink);
+    overflow-wrap: break-word;
+  }
+
+  /* The opening beat. Sits with the names as one greeting, then the
+     letter proper starts underneath it. */
+  .cheer {
+    font-family: "Fraunces", Georgia, "Times New Roman", serif;
+    font-variation-settings: "opsz" 60, "SOFT" 90, "WONK" 1;
+    font-weight: 500;
+    font-size: clamp(1.55rem, 7vw, 2.3rem);
+    line-height: 1.14;
+    letter-spacing: -0.016em;
+    margin: 0 0 clamp(1.6rem, 6.5vw, 2.4rem);
+    color: var(--sea);
     overflow-wrap: break-word;
   }
 
@@ -193,6 +207,7 @@
     main { animation: arrive 800ms ease-out both; }
 
     .salutation,
+    .cheer,
     .lead,
     .memory > p,
     .body > p,
@@ -200,22 +215,23 @@
     .sign { animation: rise 900ms cubic-bezier(0.16, 1, 0.3, 1) both; }
 
     .salutation          { animation-delay: 180ms; }
-    .lead                { animation-delay: 380ms; }
-    .memory > p          { animation-delay: 580ms; }
-    .body > p:nth-of-type(1) { animation-delay: 760ms; }
-    .body > p:nth-of-type(2) { animation-delay: 920ms; }
-    .body > p:nth-of-type(3) { animation-delay: 1080ms; }
-    .rule                { animation-delay: 1240ms; }
-    .sign                { animation-delay: 1900ms; }
+    .cheer               { animation-delay: 380ms; }
+    .lead                { animation-delay: 580ms; }
+    .memory > p          { animation-delay: 760ms; }
+    .body > p:nth-of-type(1) { animation-delay: 940ms; }
+    .body > p:nth-of-type(2) { animation-delay: 1100ms; }
+    .body > p:nth-of-type(3) { animation-delay: 1260ms; }
+    .rule                { animation-delay: 1420ms; }
+    .sign                { animation-delay: 2060ms; }
 
     /* Placed by hand, a beat after the sentence it belongs to. */
-    .snap { animation: place 1500ms cubic-bezier(0.16, 1, 0.3, 1) 760ms both; }
+    .snap { animation: place 1500ms cubic-bezier(0.16, 1, 0.3, 1) 940ms both; }
 
     /* And then it develops. */
-    .snap img { animation: develop 3000ms ease-out 1000ms both; }
+    .snap img { animation: develop 3000ms ease-out 1180ms both; }
 
     /* The wave draws itself, once, slowly. */
-    .rule path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 2600ms cubic-bezier(0.37, 0, 0.25, 1) 1450ms both; }
+    .rule path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 2600ms cubic-bezier(0.37, 0, 0.25, 1) 1630ms both; }
 
     @keyframes arrive {
       from { opacity: 0; }
@@ -249,6 +265,8 @@
 <body>
   <main>
     <h1 class="salutation">Wil, Julie,</h1>
+
+    <p class="cheer">Congratulations you two!!</p>
 
     <p class="lead">I&rsquo;m gutted I couldn&rsquo;t be there.</p>
 
